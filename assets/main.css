@@ -1,14 +1,28 @@
-.container-btn {
-    margin-top: 10px;
+html, body, .container-fluid {
+    height: 100%;
 }
 
-.container-map {
-    height: 400px;
+.container-nav {
     margin-top: 10px;
+    float: left;
+    width: 100%;
+}
+
+.container-main {
+    position: absolute;
+    top: 58px;
+    bottom: 10px;
+    left: 15px;
+    right: 15px;
 }
 
 .container-table {
-    margin-top: 10px;
+    position: absolute;
+    top: 410px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
 }
 
 .progress-xs-height {
@@ -19,4 +33,9 @@
     position: absolute;
     width: 100%;
     top: 0px;
+}
+
+#map {
+    height: 400px;
+    background-color: #f0f0f0;
 }
