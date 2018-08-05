@@ -1,12 +1,16 @@
 const { dialog } = require('electron').remote;
 const _ = require('lodash');
 const { Shapefile } = require('ginkgoch-shapefile-reader');
+const Progress = require('./utils/progress');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 const style = { color: '#000000', fillColor: '#ff0000', weight: 3 };
 
+const G = { };
 $(async () => {
     const map = L.map('map', { preferCanvas: true });
-    $('.progress').hide();
+    G.progress = new Progress($('.progress'));
+    G.progress.reset();
+
     $('.btn-choose-file').click(async e => {
         filePath = dialog.showOpenDialog({properties: ['openFile'], filters: extensionFilter });
         
@@ -27,7 +31,7 @@ async function loadFieldData(map, shapefile) {
         const total = await shapefile.count();
         const envelope = shapefile.envelope();
         
-        $('.progress').show();
+        G.progress.show();
 
         const features = [];
         let record = undefined, current = 0;
@@ -35,22 +39,16 @@ async function loadFieldData(map, shapefile) {
             data.push(record.properties);
             features.push(record);
             current++;
-            let valeur = current * 100 / total;
-            setProgress(valeur);
+            G.progress.value(current * 100 / total);
         };
         
-        $('.progress').hide();
-        setProgress(0);
+        G.progress.reset();
 
         const featureCollection = { type: 'FeatureCollection', features };
         const fieldData = { columns, data };
         $('.table-field-data').bootstrapTable('destroy').bootstrapTable(fieldData);
         loadMap(map, featureCollection).fitBounds(envelopeToBounds(envelope));
     });
-}
-
-function setProgress(valeur) {
-    $('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur);
 }
 
 function loadMap(map, featureCollection) {
