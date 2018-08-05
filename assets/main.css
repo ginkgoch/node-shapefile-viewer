@@ -3,7 +3,6 @@
 }
 
 .container-map {
-    height: 400px;
     margin-top: 10px;
 }
 
@@ -19,4 +18,9 @@
     position: absolute;
     width: 100%;
     top: 0px;
+}
+
+#map {
+    height: 400px;
+    background-color: #f0f0f0;
 }

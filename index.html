@@ -3,14 +3,18 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
-    <link href="./assets/bootstrap.min.css" rel="stylesheet" >
-    <link href="./assets/bootstrap-table.min.css" rel="stylesheet" >
-    <link href="./assets/main.css" rel="stylesheet" >
+    <link href="./assets/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/bootstrap-table.min.css" rel="stylesheet">
+    <link href="./assets/leaflet.css" rel="stylesheet">
+    <link href="./assets/main.css" rel="stylesheet">
   </head>
   <body>
     <div class="container-fluid">
       <div class="container-btn"">
           <button class="btn btn-choose-file">Choose a file</button>
+      </div>
+      <div class="container-map">
+        <div id="map"></div>
       </div>
       <div class="container-table">
         <table class="table table-field-data"></table>
@@ -22,9 +26,13 @@
   </body>
   <script src="./assets/jquery.min.js"></script>
   <script>
-  window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery');
   </script>
   <script src="./assets/bootstrap.min.js"></script>
   <script src="./assets/bootstrap-table.min.js"></script>
+  <script src="./assets/leaflet.js"></script>
+  <script>
+      window.L = require('leaflet');
+  </script>
   <script src="./assets/main.js"></script>
 </html>
