@@ -41,7 +41,7 @@ async function loadFieldData(shapefile) {
         G.progress.reset();
         
         const columns = shapefile.fields().map(f => { return { field: f, title: f }; });
-        const fieldData = { columns, data };
+        const fieldData = { columns, data, pagination: true, paginationVAlign: 'top' };
         G.table.bootstrapTable('destroy').bootstrapTable(fieldData);
 
         const bounds = LeafletEx.envelopeToBounds(envelope);
