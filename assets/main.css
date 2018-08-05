@@ -1,0 +1,22 @@
+.container-btn {
+    margin-top: 10px;
+}
+
+.container-map {
+    height: 400px;
+    margin-top: 10px;
+}
+
+.container-table {
+    margin-top: 10px;
+}
+
+.progress-xs-height {
+    height: 2px;
+}
+
+.progress-layout-top {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+}
