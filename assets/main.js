@@ -2,10 +2,10 @@ const { dialog } = require('electron').remote;
 const _ = require('lodash');
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
-const style = { color: '#000000', fillColor: '#ff0000' };
+const style = { color: '#000000', fillColor: '#ff0000', weight: 3 };
 
 $(async () => {
-    const map = L.map('map');
+    const map = L.map('map', { preferCanvas: true });
     $('.progress').hide();
     $('.btn-choose-file').click(async e => {
         filePath = dialog.showOpenDialog({properties: ['openFile'], filters: extensionFilter });
@@ -39,13 +39,13 @@ async function loadFieldData(map, shapefile) {
             setProgress(valeur);
         };
         
+        $('.progress').hide();
+        setProgress(0);
+
         const featureCollection = { type: 'FeatureCollection', features };
         const fieldData = { columns, data };
         $('.table-field-data').bootstrapTable('destroy').bootstrapTable(fieldData);
         loadMap(map, featureCollection).fitBounds(envelopeToBounds(envelope));
-
-        $('.progress').hide();
-        setProgress(0);
     });
 }
 
