@@ -3,6 +3,7 @@ const _ = require('lodash');
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const Progress = require('./utils/progress');
 const LeafletEx = require('./utils/leafletEx');
+const TableEx = require('./utils/tableEx');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 
 const G = { };
@@ -14,20 +15,24 @@ $(async () => {
 
     $('.btn-choose-file').click(async e => {
         filePath = dialog.showOpenDialog({properties: ['openFile'], filters: extensionFilter });
+        if(_.isUndefined(filePath)) {
+            console.log('cancel selection.');
+            return;
+        }
         
-        if(_.isUndefined(filePath)) console.log('cancel selection.');
-        
-        const shapefile = new Shapefile(filePath[0]);
-        await loadFieldData(shapefile);
+        G.mapState = { };
+        G.mapState.shapefile = new Shapefile(filePath[0]);
+        await initView(G.mapState.shapefile);
     });
 });
 
-async function loadFieldData(shapefile) {
+async function initView(shapefile) {
     await shapefile.openWith(async () => {
         const data = [];
         const iterator = await shapefile.iterator();
         const total = await shapefile.count();
         const envelope = shapefile.envelope();
+        const columns = shapefile.fields().map(f => { return { field: f, title: f }; });
         
         G.progress.show();
         const features = [];
@@ -40,12 +45,12 @@ async function loadFieldData(shapefile) {
         };
         G.progress.reset();
         
-        const columns = shapefile.fields().map(f => { return { field: f, title: f }; });
-        const fieldData = { columns, data, pagination: true, paginationVAlign: 'top' };
-        G.table.bootstrapTable('destroy').bootstrapTable(fieldData);
-
+        const options = { columns, data, pagination: true, paginationVAlign: 'top' };
+        G.table.bootstrapTable('destroy').bootstrapTable(options).on('click-row.bs.table', TableEx.rowSelected);
+        
         const bounds = LeafletEx.envelopeToBounds(envelope);
         const featureCollection = { type: 'FeatureCollection', features };
-        LeafletEx.loadFeatures(G.map, featureCollection).fitBounds(bounds);
+        LeafletEx.loadBase(G.map, featureCollection).fitBounds(bounds);
+        G.mapState = _.merge(G.mapState, { total, envelope, columns, featureCollection });
     });
 }
