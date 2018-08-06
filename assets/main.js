@@ -9,6 +9,7 @@ const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } 
 const G = { };
 $(async () => {
     G.map = L.map('map', { preferCanvas: true });
+    G.popup = L.popup();
     G.table = $('.table-field-data');
     G.progress = new Progress($('.progress'));
     G.progress.reset();
