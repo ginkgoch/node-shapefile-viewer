@@ -1,18 +1,54 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const CsvParser = require('json2csv').Parser;
 const { dialog } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('./tableEx');
 const LeafletEx = require('./leafletEx');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
+const jsts = require('jsts');
 
 module.exports = class Commands {
-    static async exportAsGeoJson() {
-        if (!G.mapState || !G.mapState.shapefile) {
-            dialog.showErrorBox('Shapefile is not loaded', `Please open a shapefile first.`);
-            return;
+    static zoomIn() {
+        G.map.zoomIn();
+    }
+
+    static zoomOut() {
+        G.map.zoomOut();
+    }
+
+    static zoomToBounds() {
+        if(G.mapState && G.mapState.envelope) {
+            G.map.fitBounds(LeafletEx.envelopeToBounds(G.mapState.envelope));
         }
+    }
+
+    static clearHighlights() {
+        LeafletEx.removeHighlights(G.map);
+    }
+
+    static async exportAsCsv() {
+        if(!Commands._checkShapefileAvailable()) return;
+
+        const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.csv')}`, filters: [{ name: 'Csv (*.csv)', extensions: ['csv'] }] });
+        if(saveFilePath) {
+            const fields = _.clone(G.mapState.fields);
+            fields.push('geom');
+
+            const baseLayer = await LeafletEx.getBaseLayer(G.map);
+            const features = baseLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
+                const geom = Commands._json2wkt(f);
+                return _.merge({ geom }, f.properties); 
+            });;
+            const csvParser = new CsvParser({ fields });
+            const csvContent = csvParser.parse(features);
+            fs.writeFileSync(saveFilePath, csvContent, { encoding: 'utf8' });
+        }
+    }
+
+    static async exportAsGeoJson() {
+        if(!Commands._checkShapefileAvailable()) return;
 
         const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.json')}`, filters: [{ name: 'GeoJSON (*.json)', extensions: ['json'] }] });
         if(saveFilePath) {
@@ -42,7 +78,8 @@ module.exports = class Commands {
             const iterator = await shapefile.iterator();
             const total = await shapefile.count();
             const envelope = shapefile.envelope();
-            const columns = shapefile.fields().map(f => { return { field: f, title: f }; });
+            const fields = shapefile.fields();
+            const columns = fields.map(f => { return { field: f, title: f }; });
             
             G.progress.show();
             const features = [];
@@ -61,7 +98,25 @@ module.exports = class Commands {
             const bounds = LeafletEx.envelopeToBounds(envelope);
             const featureCollection = { type: 'FeatureCollection', features };
             LeafletEx.loadBase(G.map, featureCollection).fitBounds(bounds);
-            G.mapState = _.merge(G.mapState, { total, envelope, columns, featureCollection });
+            G.mapState = _.merge(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
+    }
+
+    static _checkShapefileAvailable() {
+        if (!G.mapState || !G.mapState.shapefile) {
+            dialog.showErrorBox('Shapefile is not loaded', `Please open a shapefile first.`);
+            return false;
+        }
+
+        return true;
+    }
+
+    static _json2wkt(feature) {
+        const jsonReader = new jsts.io.GeoJSONReader();
+        const geom = jsonReader.read(feature).geometry;
+        
+        const wktWriter = new jsts.io.WKTWriter();
+        const wkt = wktWriter.write(geom);
+        return wkt;
     }
 }

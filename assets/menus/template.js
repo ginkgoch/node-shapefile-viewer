@@ -1,14 +1,9 @@
 const { app } = require('electron').remote;
+const commands = require('../utils/commands');
 
 module.exports = [{
         label: app.getName(),
-        submenu: [{
-                label: 'Open',
-                click: require('../utils/commands').openShapefile
-            },
-            {
-                type: 'separator'
-            },
+        submenu: [
             {
                 role: 'about'
             },
@@ -35,7 +30,8 @@ module.exports = [{
     {
         label: 'File',
         submenu: [{
-                label: 'Open',
+                label: 'Open Shp',
+                accelerator: 'CmdOrCtrl+O',
                 click: require('../utils/commands').openShapefile
             },
             {
@@ -43,6 +39,10 @@ module.exports = [{
                 submenu: [{
                     label: 'GeoJson',
                     click: require('../utils/commands').exportAsGeoJson
+                }, 
+                {
+                    label: 'Csv',
+                    click: require('../utils/commands').exportAsCsv
                 }]
             },
         ]
@@ -50,19 +50,27 @@ module.exports = [{
     {
         label: 'Map',
         submenu: [{
-                label: 'Zoom Default'
+                label: 'Zoom Default',
+                accelerator: 'CmdOrCtrl+0',
+                click: require('../utils/commands').zoomToBounds
             },
             {
-                label: 'Zoom In'
+                label: 'Zoom In',
+                accelerator: 'CmdOrCtrl+Up',
+                click: require('../utils/commands').zoomIn
             },
             {
-                label: 'Zoom Out'
+                label: 'Zoom Out',
+                accelerator: 'CmdOrCtrl+Down',
+                click: require('../utils/commands').zoomOut
             },
             {
                 type: 'separator'
             },
             {
-                label: 'Clear Highlights'
+                label: 'Clear Highlights',
+                accelerator: 'CmdOrCtrl+D',
+                click: commands.clearHighlights
             }
         ]
     },

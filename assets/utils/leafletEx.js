@@ -18,6 +18,10 @@ module.exports = {
         });
     },
 
+    removeHighlights: function(map) {
+        this.removeLayers(map, [ HIGHLIGHT_LAYER_NAME ]);
+    },
+
     envelopeToBounds : function(envelope) {
         return [ [ envelope.miny, envelope.minx ], [ envelope.maxy, envelope.maxx ] ];
     },
