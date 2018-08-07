@@ -12,7 +12,7 @@ function createWindow () {
   win.loadFile('./assets/main.html')
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {

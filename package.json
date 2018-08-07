@@ -1,11 +1,13 @@
 {
   "name": "shapefile-ui",
-  "version": "1.0.0",
-  "description": "",
+  "productName": "Ginkgoch Shapefile Viewer",
+  "version": "0.1.0",
+  "description": "A Shapefile Viewer Utility to help view the geometries and properties of a specified shapefile.",
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mac-build": "./node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +15,7 @@
     "babel-core": "^6.21.0",
     "babel-loader": "^7.1.4",
     "babel-preset-es2015": "^6.18.0",
+    "electron-packager": "^12.1.0",
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.4"
   },
