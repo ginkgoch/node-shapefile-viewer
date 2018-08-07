@@ -18,12 +18,16 @@ module.exports = {
         });
     },
 
+    removeHighlights: function(map) {
+        this.removeLayers(map, [ HIGHLIGHT_LAYER_NAME ]);
+    },
+
     envelopeToBounds : function(envelope) {
         return [ [ envelope.miny, envelope.minx ], [ envelope.maxy, envelope.maxx ] ];
     },
 
     loadBase : function(map, featureCollection) {
-        this.removeLayers(map, l => [ BASE_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
+        this.removeLayers(map, [ BASE_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
         const layer = L.geoJSON(featureCollection, optionsBase).on('click', e => {
             this.loadHighlight(map, e.layer.feature);
             e.originalEvent.stopPropagation();
@@ -51,5 +55,21 @@ module.exports = {
         });
 
         return $('<table />').bootstrapTable({ columns, data });
+    },
+
+    getLayerByName: async function(map, layerName) {
+        return await new Promise((resolve, reject) => {
+            map.eachLayer(l => {
+                if (l.name === layerName) {
+                    resolve(l);
+                }
+            });
+
+            reject(`Layer<${layerName}> not found.`);
+        });
+    },
+
+    getBaseLayer: async function(map) {
+        return await this.getLayerByName(map, BASE_LAYER_NAME);
     }
 };

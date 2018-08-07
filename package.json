@@ -17,14 +17,16 @@
     "babel-preset-es2015": "^6.18.0",
     "electron-packager": "^12.1.0",
     "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.4"
+    "webpack-cli": "^2.1.4",
+    "electron": "^2.0.6"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
     "bootstrap-table": "^1.12.1",
-    "electron": "^2.0.6",
     "ginkgoch-shapefile-reader": "1.0.11",
     "jquery": "^3.3.1",
+    "json2csv": "^4.2.1",
+    "jsts": "^1.6.1",
     "leaflet": "^1.3.3",
     "lodash": "^4.17.10"
   }
