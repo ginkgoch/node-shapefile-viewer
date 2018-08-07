@@ -2,12 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const CsvParser = require('json2csv').Parser;
-const { dialog } = require('electron').remote;
+const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('./tableEx');
 const LeafletEx = require('./leafletEx');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 const jsts = require('jsts');
+const uris = require('./uris');
 
 module.exports = class Commands {
     static zoomIn() {
@@ -21,6 +22,12 @@ module.exports = class Commands {
     static zoomToBounds() {
         if(G.mapState && G.mapState.envelope) {
             G.map.fitBounds(LeafletEx.envelopeToBounds(G.mapState.envelope));
+        }
+    }
+
+    static gotoUri(uriKey) {
+        return function() {
+            shell.openExternal(uris[uriKey]);
         }
     }
 
