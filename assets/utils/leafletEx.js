@@ -12,6 +12,7 @@ module.exports = {
     removeLayers : function(map, layerNames) {
         map.eachLayer(l => {
             if (_.includes(layerNames, l.name)) {
+                l.closePopup();
                 l.unbindPopup();
                 l.remove();
             }

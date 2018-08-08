@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const { Menu } = require('electron').remote;
-
+const ToolboxEx = require('./utils/toolboxEx');
 const Progress = require('./utils/progress');
-const Commands = require('./commands');
 
 const G = { };
 $(async () => {
@@ -13,10 +12,9 @@ $(async () => {
     G.table = $('.table-field-data');
     G.progress = new Progress($('.progress'));
     G.progress.reset();
-
-    $('.btn-choose-file').click(async e => {
-        await Commands.openShapefile();
-    });
+    G.alert = $('.alert').hide();
+    
+    ToolboxEx.init();
 });
 
 const menuTemplate = require('./menus');
