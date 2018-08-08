@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { Menu } = require('electron').remote;
 
 const Progress = require('./utils/progress');
-const Commands = require('./utils/commands');
+const Commands = require('./commands');
 
 const G = { };
 $(async () => {
@@ -19,7 +19,7 @@ $(async () => {
     });
 });
 
-const menuTemplate = require('./menus/template');
+const menuTemplate = require('./menus');
 function createMenu() {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
