@@ -25,6 +25,12 @@ html, body, .container-fluid {
     overflow: auto;
 }
 
+.container-alert {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
 .progress-xs-height {
     height: 2px;
 }

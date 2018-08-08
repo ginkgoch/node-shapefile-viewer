@@ -4,11 +4,13 @@ const _ = require('lodash');
 const CsvParser = require('json2csv').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
-const TableEx = require('./tableEx');
-const LeafletEx = require('./leafletEx');
+const TableEx = require('../utils/tableEx');
+const LeafletEx = require('../utils/leafletEx');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 const jsts = require('jsts');
-const uris = require('./uris');
+const uris = require('../utils/uris');
+const AlertEx = require('../utils/alertEx');
+const AlertLevels = require('../utils/alertLevels');
 
 module.exports = class Commands {
     static zoomIn() {
@@ -51,6 +53,7 @@ module.exports = class Commands {
             const csvParser = new CsvParser({ fields });
             const csvContent = csvParser.parse(features);
             fs.writeFileSync(saveFilePath, csvContent, { encoding: 'utf8' });
+            AlertEx.alert('Csv file exporting completed.', AlertLevels.success);
         }
     }
 
@@ -64,6 +67,7 @@ module.exports = class Commands {
             const featureCollection = { type: 'FeatureCollection', features: features };
             const jsonContent = JSON.stringify(featureCollection, null, 2);
             fs.writeFileSync(saveFilePath, jsonContent, { encoding: 'utf8' });
+            AlertEx.alert('GeoJson file exporting completed.', AlertLevels.success);
         }
     }
 
