@@ -45,3 +45,7 @@ html, body, .container-fluid {
     height: 400px;
     background-color: #f0f0f0;
 }
+
+i.toolbox-icon {
+    font-size: 20px;
+}

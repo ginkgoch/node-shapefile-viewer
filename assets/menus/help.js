@@ -15,6 +15,10 @@ module.exports = {
             click: commands.gotoUri('wiki')
         },
         {
+            label: 'Twitter',
+            click: commands.gotoUri('twitter')
+        },
+        {
             type: 'separator'
         },
         {
