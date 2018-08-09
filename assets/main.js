@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { Menu } = require('electron').remote;
 const ToolboxEx = require('./utils/toolboxEx');
 const Progress = require('./utils/progress');

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const circleMarkerOptionsBase = { radius: 8, fillColor: '#ff7800', color: '#000', weight: 2, opacity: 1, fillOpacity: 0.8 };
 const circleMarkerOptionsHighlight = _.merge(_.clone(circleMarkerOptionsBase), { fillColor: '#ff0000', color: '#000', weight: 3 });
 const circleMarker = (latlng, options) => L.circleMarker(latlng, options);

@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
 const CsvParser = require('json2csv').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
