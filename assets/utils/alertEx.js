@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const alertLevels = require('./alertLevels');
 
 let alertDismissTimerId = undefined;

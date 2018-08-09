@@ -1,13 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
-const CsvParser = require('json2csv').Parser;
+const CsvParser = require('../dep/json2csv.umd').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('../utils/tableEx');
 const LeafletEx = require('../utils/leafletEx');
 const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
-const jsts = require('jsts');
+const jsts = require('../dep/jsts.min');
 const uris = require('../utils/uris');
 const AlertEx = require('../utils/alertEx');
 const AlertLevels = require('../utils/alertLevels');
