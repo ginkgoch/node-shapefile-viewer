@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const CsvParser = require('json2csv').Parser;
+const CsvParser = require('../dep/json2csv.umd').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('../utils/tableEx');
