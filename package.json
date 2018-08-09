@@ -6,15 +6,12 @@
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "mac-build": "./node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds"
+    "mac-build": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.2.0",
     "electron": "^2.0.6",
-    "electron-packager": "^12.1.0",
     "ginkgoch-shapefile-reader": "1.0.11",
     "json2csv": "^4.2.1",
     "jsts": "^1.6.1",
