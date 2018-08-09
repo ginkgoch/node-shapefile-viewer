@@ -1,6 +1,6 @@
 # Shapefile Viewer
 Are you looking for a easy to use `shapefile viewer on macOS`? `Ginkgoch` provides a utility to view shapefile's geometries and properties for free.
-![Overview]()
+![Overview](https://github.com/ginkgoch/node-shapefile-viewer/raw/develop/screenshots/overview.png)
 
 ## Features
 1. Load shapefile
@@ -15,7 +15,7 @@ Are you looking for a easy to use `shapefile viewer on macOS`? `Ginkgoch` provid
 1. macOS compatible
 
 ## Overview
-![Overview-workspace]()
+![Overview-workspace](https://github.com/ginkgoch/node-shapefile-viewer/raw/develop/screenshots/overview-structure.png)
 
 Here introduces the workspaces of the UI. There are generally 5 sections.
 
@@ -29,7 +29,7 @@ Here introduces the workspaces of the UI. There are generally 5 sections.
 ### Open a shapefile
 There are two ways to open a specifid shapefile. There are on the menu on the very top and the open button on the toolbar. Select a shapefile from the popup dialog.
 
-![Open a shapefile]()
+![Open a shapefile](https://github.com/ginkgoch/node-shapefile-viewer/raw/develop/screenshots/open.png)
 
 ### Shapefile loaded
 After the shapefile is loaded, a map visualizes on the `Map` and its properties displays on the `Properties` area.
