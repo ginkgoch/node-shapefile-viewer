@@ -105,15 +105,20 @@
     </div>
   </div>
 </body>
-<script>
-  window.$ = window.jQuery = require('jquery');
+<!-- <script>
+  window.$ = window.jQuery = require('./assets/dep/jquery');
   window.Popper = require('popper.js');
-</script>
+</script> -->
+
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<script src="./dep/jquery.min.js"></script>
+<script src="./dep/popper.min.js"></script>
 <script src="./dep/bootstrap.min.js"></script>
 <script src="./dep/bootstrap-table.min.js"></script>
-<script>
-  window.L = require('leaflet');
-</script>
+<script src="./dep/leaflet.js"></script>
+
+<script>if (window.module) module = window.module;</script>
 <script src="./main.js"></script>
 
 </html>
