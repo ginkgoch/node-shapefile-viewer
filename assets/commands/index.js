@@ -11,6 +11,7 @@ const jsts = require('jsts');
 const uris = require('../utils/uris');
 const AlertEx = require('../utils/alertEx');
 const AlertLevels = require('../utils/alertLevels');
+const MessageBoard = require('../storage/MessageBoard');
 
 module.exports = class Commands {
     static zoomIn() {
@@ -35,6 +36,24 @@ module.exports = class Commands {
 
     static clearHighlights() {
         LeafletEx.removeHighlights(G.map);
+    }
+
+    static submitFeedback() {
+        const email = $('#feedbackInputEmail').val();
+        const content = $('#feedbackTextareaContent').val();
+        const message = new MessageBoard();
+        message.set('email', email);
+        message.set('content', content);
+        message.save().then(() => {
+            $('#feedbackInputEmail').val('');
+            $('#feedbackTextareaContent').val('');
+            $('#messageModalCenter').modal('hide');
+            AlertEx.alert('Feedback submitted. Thank you.', AlertLevels.success);
+        }, err => {
+            $('#messageModalCenter').modal('hide');
+            const errDetail = { title: 'Feedback sumbmitted failed.', message: err.message };
+            AlertEx.alert(errDetail, AlertLevels.danger);
+        });
     }
 
     static async exportAsCsv() {
