@@ -95,14 +95,11 @@ module.exports = class Commands {
     static async openShapefile(filePath = undefined) {
         if (!_.isString(filePath) || _.isUndefined(filePath)) {
             filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
-            if(_.isUndefined(filePath) || filePath.length === 0) {
-                console.log('cancel selection.');
-                return;
-            }
-            else {
-                filePath = filePath[0];
-            }
+            if(_.isUndefined(filePath) || filePath.length === 0) { return; }
+            else { filePath = filePath[0]; }
         }
+
+        if (!Commands._checkShapefilesExist(filePath)) { return; }
         
         G.mapState = { };
         G.mapState.shapefile = new Shapefile(filePath);
@@ -172,6 +169,20 @@ module.exports = class Commands {
             LeafletEx.loadBase(G.map, featureCollection).fitBounds(bounds);
             G.mapState = _.merge(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
+    }
+
+    static _checkShapefilesExist(filePath) {
+        const exts = ['.shp', '.shx', '.dbf'];
+        const missingFiles = exts.map(ext => filePath.replace(/\.shp/i, ext)).map(f => {
+            return fs.existsSync(f) ? { success: true } : { success: false, file: path.basename(f) };
+        }).filter(r => !r.success).map(r => r.file);
+
+        if(missingFiles && missingFiles.length > 0) {
+            AlertEx.alert(missingFiles.join(', ') + ' cannot found.', AlertLevels.danger);
+            return false;
+        }
+
+        return true;
     }
 
     static _checkShapefileAvailable() {
