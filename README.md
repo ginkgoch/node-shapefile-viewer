@@ -1,8 +1,7 @@
 # Shapefile Viewer
 Are you looking for a easy to use `shapefile viewer on macOS`? `Ginkgoch` provides a utility to view shapefile's geometries and properties for free.
 
-* For Mac [Download](https://github.com/ginkgoch/node-shapefile-viewer/releases/download/0.1.0/Ginkgoch.Shapefile.Viewer-darwin-x64.zip)
-* For Windows [Download](https://github.com/ginkgoch/node-shapefile-viewer/releases/download/0.1.0/Ginkgoch.Shapefile.Viewer-win32-ia32.zip)
+* For Mac and Windows executable, please download from the [release page](https://github.com/ginkgoch/node-shapefile-viewer/releases).
 
 ![Overview](https://github.com/ginkgoch/node-shapefile-viewer/raw/develop/screenshots/overview.png)
 
