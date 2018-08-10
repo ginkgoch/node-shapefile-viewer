@@ -1,7 +1,5 @@
-const { app } = require('electron').remote;
-
 module.exports = {
-    label: app.getName(),
+    label: 'Ginkgoch',
     submenu: [
         { role: 'about' },
         { type: 'separator' },
