@@ -1,7 +1,8 @@
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const CsvParser = require('../dep/json2csv.umd').Parser;
-const { dialog, shell } = require('electron').remote;
+const { dialog, shell, Menu, MenuItem } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('../utils/tableEx');
 const LeafletEx = require('../utils/leafletEx');
@@ -11,6 +12,8 @@ const uris = require('../utils/uris');
 const AlertEx = require('../utils/alertEx');
 const AlertLevels = require('../utils/alertLevels');
 const MessageBoard = require('../storage/MessageBoard');
+const RECENTLY_OPENED_MAX_COUNT = 5;
+const RECENTLY_OPENED_STORAGE_KEY = 'recentlyOpened';
 
 module.exports = class Commands {
     static zoomIn() {
@@ -89,16 +92,56 @@ module.exports = class Commands {
         }
     }
 
-    static async openShapefile() {
-        const filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
-        if(_.isUndefined(filePath)) {
-            console.log('cancel selection.');
-            return;
+    static async openShapefile(filePath = undefined) {
+        if (!_.isString(filePath) || _.isUndefined(filePath)) {
+            filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
+            if(_.isUndefined(filePath) || filePath.length === 0) {
+                console.log('cancel selection.');
+                return;
+            }
+            else {
+                filePath = filePath[0];
+            }
         }
         
         G.mapState = { };
-        G.mapState.shapefile = new Shapefile(filePath[0]);
+        G.mapState.shapefile = new Shapefile(filePath);
         await Commands._initView(G.mapState.shapefile);
+        Commands._recordRecentlyOpened(filePath);
+    }
+
+    static _recordRecentlyOpened(filePath) {
+        let recentlyOpened = undefined;
+        let recentlyOpenedContent = localStorage.getItem('recentlyOpened');
+        if (_.isUndefined(recentlyOpenedContent)) {
+            recentlyOpened = [];
+        } else {
+            recentlyOpened = JSON.parse(recentlyOpenedContent);
+        }
+
+        const removeIndex = recentlyOpened.indexOf(filePath);
+        if (removeIndex !== -1) {
+            recentlyOpened.splice(removeIndex, 1);
+        }
+        recentlyOpened.unshift(filePath);
+        while (recentlyOpened.length > RECENTLY_OPENED_MAX_COUNT) {
+            recentlyOpened.pop();
+        }
+
+        localStorage.setItem(RECENTLY_OPENED_STORAGE_KEY, JSON.stringify(recentlyOpened));
+        Commands._updateRecentlyOpened(recentlyOpened);
+    }
+
+    static _syncRecentlyOpened() {
+        let recentlyOpened = undefined;
+        const recentlyOpenedContent = localStorage.getItem('recentlyOpened');
+        if (!_.isUndefined(recentlyOpenedContent)) {
+            recentlyOpened = JSON.parse(recentlyOpenedContent);
+        } else {
+            return;
+        }
+
+        Commands._updateRecentlyOpened(recentlyOpened);
     }
 
     static async _initView(shapefile) {
@@ -147,5 +190,27 @@ module.exports = class Commands {
         const wktWriter = new jsts.io.WKTWriter();
         const wkt = wktWriter.write(geom);
         return wkt;
+    }
+
+    static _updateRecentlyOpened(recentlyOpened) {
+        if(!_.isArray(recentlyOpened)) return;
+
+        const appMenu = Menu.getApplicationMenu();
+        const recentOpenedMenuItem = appMenu.getMenuItemById('mi_open_recently');
+        recentOpenedMenuItem.submenu.clear();
+        recentlyOpened.forEach(i => {
+            let filePath = i;
+            const menuItem = new MenuItem({ label: Commands._shortenPath(filePath), click: function(f) {
+                return async () => await Commands.openShapefile(f);
+            }(filePath) });
+            recentOpenedMenuItem.submenu.append(menuItem);
+        });
+
+        Menu.setApplicationMenu(appMenu);
+    }
+
+    static _shortenPath(filePath) {
+        const home = os.homedir();
+        return filePath.replace(home, '~');
     }
 }
