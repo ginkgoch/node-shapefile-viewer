@@ -21,6 +21,15 @@ module.exports = {
             type: 'separator'
         },
         {
+            type: 'radio',
+            label: 'Open street map',
+            checked: true,
+            click: commands.toggleBaseMap
+        },
+        {
+            type: 'separator'
+        },
+        {
             label: 'Clear Highlights',
             accelerator: 'CmdOrCtrl+D',
             click: commands.clearHighlights

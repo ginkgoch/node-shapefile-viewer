@@ -1,13 +1,16 @@
 const { Menu } = require('electron').remote;
 const ToolboxEx = require('./utils/toolboxEx');
 const Progress = require('./utils/progress');
-const Commands = require('./commands');
+const LeafletEx = require('./utils/leafletEx');
+const RecentlyFileEx = require('./utils/recentlyFileEx');
 
 const G = { };
 $(async () => {
     createMenu();
 
     G.map = L.map('map', { preferCanvas: true });
+    LeafletEx.loadBaseLayer(G.map);
+    G.map.setView([0, 0], 2);
     G.popup = L.popup();
     G.table = $('.table-field-data');
     G.progress = new Progress($('.progress'));
@@ -15,7 +18,7 @@ $(async () => {
     G.alert = $('.alert').hide();
     
     ToolboxEx.init();
-    Commands._syncRecentlyOpened();
+    RecentlyFileEx.init();
 });
 
 const menuTemplate = require('./menus');
