@@ -1,6 +1,7 @@
 const { Menu } = require('electron').remote;
 const ToolboxEx = require('./utils/toolboxEx');
 const Progress = require('./utils/progress');
+const Commands = require('./commands');
 
 const G = { };
 $(async () => {
@@ -14,6 +15,7 @@ $(async () => {
     G.alert = $('.alert').hide();
     
     ToolboxEx.init();
+    Commands._syncRecentlyOpened();
 });
 
 const menuTemplate = require('./menus');
