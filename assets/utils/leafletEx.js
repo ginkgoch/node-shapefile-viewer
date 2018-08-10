@@ -38,11 +38,19 @@ module.exports = {
     },
 
     loadBaseLayer : function(map) {
-        L.tileLayer.provider('OpenStreetMap').addTo(map).id = BASE_MAP_NAME;
+        L.tileLayer.provider('OpenStreetMap').addTo(map).name = BASE_MAP_NAME;
     },
 
     removeBaseLayer: function(map) {
         this.removeLayers(map, [ BASE_MAP_NAME ]);
+    },
+
+    getJsonLayer: async function(map) {
+        return await this.getLayerByName(map, VECTOR_LAYER_NAME);
+    },
+
+    getBaseLayer: async function(map) {
+        return await this.getLayerByName(map, BASE_MAP_NAME);
     },
 
     loadHighlight : function(map, feature) {
@@ -74,11 +82,7 @@ module.exports = {
                 }
             });
 
-            reject(`Layer<${layerName}> not found.`);
+            resolve(null);
         });
-    },
-
-    getBaseLayer: async function(map) {
-        return await this.getLayerByName(map, VECTOR_LAYER_NAME);
     }
 };

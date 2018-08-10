@@ -21,7 +21,8 @@ module.exports = {
             type: 'separator'
         },
         {
-            type: 'radio',
+            id: 'mi_map_osm',
+            type: 'checkbox',
             label: 'Open street map',
             checked: true,
             click: commands.toggleBaseMap

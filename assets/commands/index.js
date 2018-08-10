@@ -5,13 +5,14 @@ const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('../utils/tableEx');
 const LeafletEx = require('../utils/leafletEx');
-const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 const jsts = require('../dep/jsts.min');
 const uris = require('../utils/uris');
 const AlertEx = require('../utils/alertEx');
 const AlertLevels = require('../utils/alertLevels');
 const MessageBoard = require('../storage/MessageBoard');
 const RecentlyFileEx = require('../utils/recentlyFileEx');
+const LocalStorageEx = require('../utils/localStorageEx');
+const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 
 module.exports = class Commands {
     static zoomIn() {
@@ -56,6 +57,19 @@ module.exports = class Commands {
         });
     }
 
+    static async toggleBaseMap() {
+        const baseMapOn = !LocalStorageEx.getBaseMapOn();
+        let baseLayer = await LeafletEx.getBaseLayer(G.map);
+        if (baseMapOn && !baseLayer) {
+            LeafletEx.loadBaseLayer(G.map);
+        } else if (!baseMapOn && baseLayer) {
+            baseLayer.remove();
+        }
+
+        LocalStorageEx.setBaseMapOn(baseMapOn);
+        require('../utils/menuEx').setBaseMapOn(baseMapOn);
+    }
+
     static async exportAsCsv() {
         if(!Commands._checkShapefileAvailable()) return;
 
@@ -64,8 +78,8 @@ module.exports = class Commands {
             const fields = _.clone(G.mapState.fields);
             fields.push('geom');
 
-            const baseLayer = await LeafletEx.getBaseLayer(G.map);
-            const features = baseLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
+            const jsonLayer = await LeafletEx.getJsonLayer(G.map);
+            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
                 const geom = Commands._json2wkt(f);
                 return _.merge({ geom }, f.properties); 
             });;
@@ -81,8 +95,8 @@ module.exports = class Commands {
 
         const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.json')}`, filters: [{ name: 'GeoJSON (*.json)', extensions: ['json'] }] });
         if(saveFilePath) {
-            const baseLayer = await LeafletEx.getBaseLayer(G.map);
-            const features = baseLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
+            const jsonLayer = await LeafletEx.getJsonLayer(G.map);
+            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
             const featureCollection = { type: 'FeatureCollection', features: features };
             const jsonContent = JSON.stringify(featureCollection, null, 2);
             fs.writeFileSync(saveFilePath, jsonContent, { encoding: 'utf8' });
