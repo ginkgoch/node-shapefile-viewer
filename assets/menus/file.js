@@ -8,6 +8,14 @@ module.exports = {
             click: commands.openShapefile
         },
         {
+            id: 'mi_open_recently',
+            label: 'Open Recently',
+            submenu: []
+        },
+        {
+            type: 'separator'
+        },
+        {
             label: 'Export To',
             submenu: [{
                 label: 'GeoJson',

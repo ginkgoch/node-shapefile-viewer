@@ -5,12 +5,14 @@ const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
 const TableEx = require('../utils/tableEx');
 const LeafletEx = require('../utils/leafletEx');
-const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 const jsts = require('../dep/jsts.min');
 const uris = require('../utils/uris');
 const AlertEx = require('../utils/alertEx');
 const AlertLevels = require('../utils/alertLevels');
 const MessageBoard = require('../storage/MessageBoard');
+const RecentlyFileEx = require('../utils/recentlyFileEx');
+const LocalStorageEx = require('../utils/localStorageEx');
+const extensionFilter = [ { name: 'Shapefiles (*.shp)', extensions: [ 'shp' ] } ];
 
 module.exports = class Commands {
     static zoomIn() {
@@ -55,6 +57,19 @@ module.exports = class Commands {
         });
     }
 
+    static async toggleBaseMap() {
+        const baseMapOn = !LocalStorageEx.getBaseMapOn();
+        let baseLayer = await LeafletEx.getBaseLayer(G.map);
+        if (baseMapOn && !baseLayer) {
+            LeafletEx.loadBaseLayer(G.map);
+        } else if (!baseMapOn && baseLayer) {
+            baseLayer.remove();
+        }
+
+        LocalStorageEx.setBaseMapOn(baseMapOn);
+        require('../utils/menuEx').setBaseMapOn(baseMapOn);
+    }
+
     static async exportAsCsv() {
         if(!Commands._checkShapefileAvailable()) return;
 
@@ -63,8 +78,8 @@ module.exports = class Commands {
             const fields = _.clone(G.mapState.fields);
             fields.push('geom');
 
-            const baseLayer = await LeafletEx.getBaseLayer(G.map);
-            const features = baseLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
+            const jsonLayer = await LeafletEx.getJsonLayer(G.map);
+            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
                 const geom = Commands._json2wkt(f);
                 return _.merge({ geom }, f.properties); 
             });;
@@ -80,8 +95,8 @@ module.exports = class Commands {
 
         const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.json')}`, filters: [{ name: 'GeoJSON (*.json)', extensions: ['json'] }] });
         if(saveFilePath) {
-            const baseLayer = await LeafletEx.getBaseLayer(G.map);
-            const features = baseLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
+            const jsonLayer = await LeafletEx.getJsonLayer(G.map);
+            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
             const featureCollection = { type: 'FeatureCollection', features: features };
             const jsonContent = JSON.stringify(featureCollection, null, 2);
             fs.writeFileSync(saveFilePath, jsonContent, { encoding: 'utf8' });
@@ -89,16 +104,19 @@ module.exports = class Commands {
         }
     }
 
-    static async openShapefile() {
-        const filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
-        if(_.isUndefined(filePath)) {
-            console.log('cancel selection.');
-            return;
+    static async openShapefile(filePath = undefined) {
+        if (!_.isString(filePath) || _.isUndefined(filePath)) {
+            filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
+            if(_.isUndefined(filePath) || filePath.length === 0) { return; }
+            else { filePath = filePath[0]; }
         }
+
+        if (!Commands._checkShapefilesExist(filePath)) { return; }
         
         G.mapState = { };
-        G.mapState.shapefile = new Shapefile(filePath[0]);
+        G.mapState.shapefile = new Shapefile(filePath);
         await Commands._initView(G.mapState.shapefile);
+        RecentlyFileEx.recordRecentlyOpened(filePath);
     }
 
     static async _initView(shapefile) {
@@ -126,9 +144,23 @@ module.exports = class Commands {
             
             const bounds = LeafletEx.envelopeToBounds(envelope);
             const featureCollection = { type: 'FeatureCollection', features };
-            LeafletEx.loadBase(G.map, featureCollection).fitBounds(bounds);
+            LeafletEx.loadJsonLayer(G.map, featureCollection).fitBounds(bounds);
             G.mapState = _.merge(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
+    }
+
+    static _checkShapefilesExist(filePath) {
+        const exts = ['.shp', '.shx', '.dbf'];
+        const missingFiles = exts.map(ext => filePath.replace(/\.shp/i, ext)).map(f => {
+            return fs.existsSync(f) ? { success: true } : { success: false, file: path.basename(f) };
+        }).filter(r => !r.success).map(r => r.file);
+
+        if(missingFiles && missingFiles.length > 0) {
+            AlertEx.alert(missingFiles.join(', ') + ' cannot found.', AlertLevels.danger);
+            return false;
+        }
+
+        return true;
     }
 
     static _checkShapefileAvailable() {

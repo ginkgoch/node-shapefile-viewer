@@ -4,8 +4,9 @@ const circleMarker = (latlng, options) => L.circleMarker(latlng, options);
 const optionsBase = { color: '#000000', fillColor: '#ff0000', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsBase) };
 const optionsHighlight = { color: 'yellow', fillColor: 'yellow', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsHighlight) };
 
-const BASE_LAYER_NAME = 'base layer';
+const VECTOR_LAYER_NAME = 'vector layer';
 const HIGHLIGHT_LAYER_NAME = 'highlight layer';
+const BASE_MAP_NAME = 'base map';
 
 module.exports = {
     removeLayers : function(map, layerNames) {
@@ -26,14 +27,30 @@ module.exports = {
         return [ [ envelope.miny, envelope.minx ], [ envelope.maxy, envelope.maxx ] ];
     },
 
-    loadBase : function(map, featureCollection) {
-        this.removeLayers(map, [ BASE_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
+    loadJsonLayer : function(map, featureCollection) {
+        this.removeLayers(map, [ VECTOR_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
         const layer = L.geoJSON(featureCollection, optionsBase).on('click', e => {
             this.loadHighlight(map, e.layer.feature);
             e.originalEvent.stopPropagation();
         }).addTo(map);
-        layer.name = BASE_LAYER_NAME;
+        layer.name = VECTOR_LAYER_NAME;
         return G.map;
+    },
+
+    loadBaseLayer : function(map) {
+        L.tileLayer.provider('OpenStreetMap').addTo(map).name = BASE_MAP_NAME;
+    },
+
+    removeBaseLayer: function(map) {
+        this.removeLayers(map, [ BASE_MAP_NAME ]);
+    },
+
+    getJsonLayer: async function(map) {
+        return await this.getLayerByName(map, VECTOR_LAYER_NAME);
+    },
+
+    getBaseLayer: async function(map) {
+        return await this.getLayerByName(map, BASE_MAP_NAME);
     },
 
     loadHighlight : function(map, feature) {
@@ -65,11 +82,7 @@ module.exports = {
                 }
             });
 
-            reject(`Layer<${layerName}> not found.`);
+            resolve(null);
         });
-    },
-
-    getBaseLayer: async function(map) {
-        return await this.getLayerByName(map, BASE_LAYER_NAME);
     }
 };

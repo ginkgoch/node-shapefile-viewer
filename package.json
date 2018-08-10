@@ -1,13 +1,13 @@
 {
   "name": "shapefile-ui",
-  "productName": "Ginkgoch Shapefile Viewer",
+  "productName": "Ginkgoch",
   "version": "0.1.0",
   "description": "A Shapefile Viewer Utility to help view the geometries and properties of a specified shapefile.",
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/electron .",
     "mac-build": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "win-build": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Ginkgoch Shapefile Viewer\"",
+    "win-build": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Ginkgoch\"",
     "download-env": "./node_modules/.bin/electron-download --mirror=https://npm.taobao.org/mirrors/electron/ --version=2.0.7 --platform=win32 --arch=ia32"
   },
   "author": "",

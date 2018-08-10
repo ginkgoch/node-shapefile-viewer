@@ -14,7 +14,7 @@ module.exports = class AlertEx {
         if (alertDismissTimerId) { 
             clearTimeout(alertDismissTimerId);
         }
-        alertDismissTimerId = setTimeout(() => alertContainer.hide('slow'), 3000);
+        alertDismissTimerId = setTimeout(() => alertContainer.fadeOut(1000), 3000);
     }
 
     static _toHtml(content) {
