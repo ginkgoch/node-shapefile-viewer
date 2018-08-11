@@ -4,7 +4,7 @@ const MENU_STATS_STORAGE_KEY = 'menuStats';
 module.exports = class LocalStorageEx {
     static getRecentlyOpened() {
         let recentlyOpenedContent = localStorage.getItem(RECENTLY_OPENED_STORAGE_KEY);
-        if (_.isUndefined(recentlyOpenedContent)) return [];
+        if (!recentlyOpenedContent) return [];
         else return JSON.parse(recentlyOpenedContent);
     }
 
