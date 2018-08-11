@@ -8,6 +8,7 @@
     "start": "./node_modules/.bin/electron .",
     "mac-build": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "win-build": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Ginkgoch\"",
+    "linux-build": "electron-packager . \"Ginkgoch\" --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/linux/icon.png --prune=true --out=release-builds",
     "download-env": "./node_modules/.bin/electron-download --mirror=https://npm.taobao.org/mirrors/electron/ --version=2.0.7 --platform=win32 --arch=ia32"
   },
   "author": "",
