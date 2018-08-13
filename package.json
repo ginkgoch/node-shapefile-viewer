@@ -15,6 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^2.0.6",
-    "ginkgoch-shapefile-reader": "1.0.13"
+    "ginkgoch-shapefile-reader": "1.0.14"
   }
 }
