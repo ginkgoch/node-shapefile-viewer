@@ -79,7 +79,7 @@ module.exports = class Commands {
             fields.push('geom');
 
             const jsonLayer = await LeafletEx.getJsonLayer(G.map);
-            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
+            const features = jsonLayer.getLayers().map(l =>  l.feature).map(f => { 
                 const geom = Commands._json2wkt(f);
                 return _.merge({ geom }, f.properties); 
             });;
@@ -96,7 +96,7 @@ module.exports = class Commands {
         const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.json')}`, filters: [{ name: 'GeoJSON (*.json)', extensions: ['json'] }] });
         if(saveFilePath) {
             const jsonLayer = await LeafletEx.getJsonLayer(G.map);
-            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
+            const features = jsonLayer.getLayers().map(l =>  l.feature);
             const featureCollection = { type: 'FeatureCollection', features: features };
             const jsonContent = JSON.stringify(featureCollection, null, 2);
             fs.writeFileSync(saveFilePath, jsonContent, { encoding: 'utf8' });
@@ -131,7 +131,7 @@ module.exports = class Commands {
             const features = [];
             let record = undefined, current = 0;
             while ((record = await iterator.next()) && !record.done) {
-                features.push(record);
+                features.push(record.result);
                 current++;
                 G.progress.value(current * 100 / total);
             };
