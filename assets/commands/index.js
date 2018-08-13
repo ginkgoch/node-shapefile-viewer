@@ -121,7 +121,6 @@ module.exports = class Commands {
 
     static async _initView(shapefile) {
         await shapefile.openWith(async () => {
-            const data = [];
             const iterator = await shapefile.iterator();
             const total = await shapefile.count();
             const envelope = shapefile.envelope();
@@ -132,20 +131,20 @@ module.exports = class Commands {
             const features = [];
             let record = undefined, current = 0;
             while ((record = await iterator.next()) && !record.done) {
-                data.push(record.properties);
                 features.push(record);
                 current++;
                 G.progress.value(current * 100 / total);
             };
             G.progress.reset();
             
+            const data = features.map(f => f.properties);
             const options = { columns, data, pagination: true, paginationVAlign: 'top' };
             G.table.bootstrapTable('destroy').bootstrapTable(options).on('click-row.bs.table', TableEx.rowSelected);
             
             const bounds = LeafletEx.envelopeToBounds(envelope);
             const featureCollection = { type: 'FeatureCollection', features };
             LeafletEx.loadJsonLayer(G.map, featureCollection).fitBounds(bounds);
-            G.mapState = _.merge(G.mapState, { fields, total, envelope, columns, featureCollection });
+            G.mapState = _.assign(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
     }
 
