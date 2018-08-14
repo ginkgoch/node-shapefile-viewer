@@ -17,6 +17,7 @@ module.exports = class Progress {
 
     value(val) {
         if (this.previous + this.changeRatio <= val || val === 100) {
+            val = parseInt(val);
             this._value(val);
             this.previous = val;
         }
