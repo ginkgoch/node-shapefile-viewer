@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { EventEmitter } = require('events');
 const CsvParser = require('../dep/json2csv.umd').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
@@ -121,20 +122,17 @@ module.exports = class Commands {
 
     static async _initView(shapefile) {
         await shapefile.openWith(async () => {
-            const iterator = await shapefile.iterator();
             const total = await shapefile.count();
             const envelope = shapefile.envelope();
             const fields = shapefile.fields();
             const columns = fields.map(f => { return { field: f, title: f }; });
             
             G.progress.show();
-            const features = [];
-            let record = undefined, current = 0;
-            while ((record = await iterator.next()) && !record.done) {
-                features.push(record.result);
-                current++;
-                G.progress.value(current * 100 / total);
-            };
+            shapefile.eventEmitter = new EventEmitter();
+            shapefile.eventEmitter.on('progress', (c, t) => G.progress.value(c * 100 / t));
+            const features = await shapefile.records();
+            shapefile.eventEmitter.removeAllListeners();
+            shapefile.eventEmitter = null;
             G.progress.reset();
             
             const data = features.map(f => f.properties);
