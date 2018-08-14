@@ -29,10 +29,12 @@ module.exports = {
 
     loadJsonLayer : function(map, featureCollection) {
         this.removeLayers(map, [ VECTOR_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
-        const layer = L.geoJSON(featureCollection, optionsBase).on('click', e => {
+        const jsonLayer = L.geoJSON(featureCollection, optionsBase).on('click', e => {
             this.loadHighlight(map, e.layer.feature);
             e.originalEvent.stopPropagation();
-        }).addTo(map);
+        });
+
+        const layer = L.markerClusterGroup().addLayer(jsonLayer).addTo(map);
         layer.name = VECTOR_LAYER_NAME;
         return G.map;
     },
