@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { EventEmitter } = require('events');
 const CsvParser = require('../dep/json2csv.umd').Parser;
 const { dialog, shell } = require('electron').remote;
 const { Shapefile } = require('ginkgoch-shapefile-reader');
@@ -79,7 +80,7 @@ module.exports = class Commands {
             fields.push('geom');
 
             const jsonLayer = await LeafletEx.getJsonLayer(G.map);
-            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done')).map(f => { 
+            const features = jsonLayer.getLayers().map(l =>  l.feature).map(f => { 
                 const geom = Commands._json2wkt(f);
                 return _.merge({ geom }, f.properties); 
             });;
@@ -96,7 +97,7 @@ module.exports = class Commands {
         const saveFilePath = dialog.showSaveDialog({ defaultPath: `*/${path.basename(G.mapState.shapefile.filePath).replace(/\.shp/, '.json')}`, filters: [{ name: 'GeoJSON (*.json)', extensions: ['json'] }] });
         if(saveFilePath) {
             const jsonLayer = await LeafletEx.getJsonLayer(G.map);
-            const features = jsonLayer.getLayers().map(l =>  _.omit(l.feature, 'done'));
+            const features = jsonLayer.getLayers().map(l =>  l.feature);
             const featureCollection = { type: 'FeatureCollection', features: features };
             const jsonContent = JSON.stringify(featureCollection, null, 2);
             fs.writeFileSync(saveFilePath, jsonContent, { encoding: 'utf8' });
@@ -121,31 +122,27 @@ module.exports = class Commands {
 
     static async _initView(shapefile) {
         await shapefile.openWith(async () => {
-            const data = [];
-            const iterator = await shapefile.iterator();
             const total = await shapefile.count();
             const envelope = shapefile.envelope();
             const fields = shapefile.fields();
             const columns = fields.map(f => { return { field: f, title: f }; });
             
             G.progress.show();
-            const features = [];
-            let record = undefined, current = 0;
-            while ((record = await iterator.next()) && !record.done) {
-                data.push(record.properties);
-                features.push(record);
-                current++;
-                G.progress.value(current * 100 / total);
-            };
+            shapefile.eventEmitter = new EventEmitter();
+            shapefile.eventEmitter.on('progress', (c, t) => G.progress.value(c * 100 / t));
+            const features = await shapefile.records();
+            shapefile.eventEmitter.removeAllListeners();
+            shapefile.eventEmitter = null;
             G.progress.reset();
             
+            const data = features.map(f => f.properties);
             const options = { columns, data, pagination: true, paginationVAlign: 'top' };
             G.table.bootstrapTable('destroy').bootstrapTable(options).on('click-row.bs.table', TableEx.rowSelected);
             
             const bounds = LeafletEx.envelopeToBounds(envelope);
             const featureCollection = { type: 'FeatureCollection', features };
             LeafletEx.loadJsonLayer(G.map, featureCollection).fitBounds(bounds);
-            G.mapState = _.merge(G.mapState, { fields, total, envelope, columns, featureCollection });
+            G.mapState = _.assign(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
     }
 
