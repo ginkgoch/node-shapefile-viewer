@@ -41,6 +41,8 @@ There are two ways to open a specifid shapefile. There are on the menu on the ve
 ### Shapefile loaded
 After the shapefile is loaded, a map visualizes on the `Map` and its properties displays on the `Properties` area.
 
+![Point cluster](https://github.com/ginkgoch/node-shapefile-viewer/raw/develop/screenshots/point-cluster.png)
+
 ### Identify features
 There are two entires to identify a feature and make it highlighted.
 1. Click an area on the `Map`; if there is any near by feature, it will highlights with a different fill color, its properties will be rendered in a popup.

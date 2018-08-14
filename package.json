@@ -1,7 +1,7 @@
 {
   "name": "shapefile-ui",
   "productName": "Ginkgoch",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A Shapefile Viewer Utility to help view the geometries and properties of a specified shapefile.",
   "main": "index.js",
   "scripts": {
