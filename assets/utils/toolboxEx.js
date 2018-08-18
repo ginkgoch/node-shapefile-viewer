@@ -9,7 +9,6 @@ module.exports = class ToolboxEx {
         $('.btn-zoom-in').click(Commands.zoomIn);
         $('.btn-zoom-out').click(Commands.zoomOut);
         $('.btn-highlight-clear').click(Commands.clearHighlights);
-        $('.btn-set-styles').click(Commands.setStyles);
         $('.btn-github').click(Commands.gotoUri('repo'));
         $('.btn-issues').click(Commands.gotoUri('issues'));
         $('.btn-twitter').click(Commands.gotoUri('twitter'));
