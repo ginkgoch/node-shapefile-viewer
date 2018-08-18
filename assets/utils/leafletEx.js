@@ -1,8 +1,4 @@
-const circleMarkerOptionsBase = { radius: 8, fillColor: '#ff7800', color: '#000', weight: 2, opacity: 1, fillOpacity: 0.8 };
-const circleMarkerOptionsHighlight = _.merge(_.clone(circleMarkerOptionsBase), { fillColor: '#ff0000', color: '#000', weight: 3 });
-const circleMarker = (latlng, options) => L.circleMarker(latlng, options);
-const optionsBase = { color: '#000000', fillColor: '#ff0000', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsBase) };
-const optionsHighlight = { color: 'yellow', fillColor: 'yellow', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsHighlight) };
+const StyleEx = require('./styleEx');
 
 const VECTOR_LAYER_NAME = 'vector layer';
 const HIGHLIGHT_LAYER_NAME = 'highlight layer';
@@ -29,14 +25,14 @@ module.exports = {
 
     loadJsonLayer : function(map, featureCollection) {
         this.removeLayers(map, [ VECTOR_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
-        const jsonLayer = L.geoJSON(featureCollection, optionsBase).on('click', e => {
+        const jsonLayer = L.geoJSON(featureCollection, StyleEx.basic()).on('click', e => {
             this.loadHighlight(map, e.layer.feature);
             e.originalEvent.stopPropagation();
         });
 
         const layer = L.markerClusterGroup().addLayer(jsonLayer).addTo(map);
         layer.name = VECTOR_LAYER_NAME;
-        return G.map;
+        return map;
     },
 
     loadBaseLayer : function(map) {
@@ -51,13 +47,17 @@ module.exports = {
         return await this.getLayerByName(map, VECTOR_LAYER_NAME);
     },
 
+    getHighlightLayer: async function(map) {
+        return await this.getLayerByName(map, HIGHLIGHT_LAYER_NAME);
+    },
+
     getBaseLayer: async function(map) {
         return await this.getLayerByName(map, BASE_MAP_NAME);
     },
 
     loadHighlight : function(map, feature) {
         this.removeLayers(map, [ HIGHLIGHT_LAYER_NAME ]);           
-        const layer = L.geoJSON(feature, _.merge(optionsHighlight, { interactive: false })).addTo(map).bindPopup(G.popup, { maxHeight: 200 });
+        const layer = L.geoJSON(feature, StyleEx.highlight()).addTo(map).bindPopup(G.popup, { maxHeight: 200 });
         layer.name = HIGHLIGHT_LAYER_NAME;
         const latlng = layer.getBounds().getCenter();
 
