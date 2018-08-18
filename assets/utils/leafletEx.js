@@ -3,6 +3,7 @@ const StyleEx = require('./styleEx');
 const VECTOR_LAYER_NAME = 'vector layer';
 const HIGHLIGHT_LAYER_NAME = 'highlight layer';
 const BASE_MAP_NAME = 'base map';
+const randomColor = false;
 
 module.exports = {
     removeLayers : function(map, layerNames) {
@@ -25,7 +26,25 @@ module.exports = {
 
     loadJsonLayer : function(map, featureCollection) {
         this.removeLayers(map, [ VECTOR_LAYER_NAME, HIGHLIGHT_LAYER_NAME ]);
-        const jsonLayer = L.geoJSON(featureCollection, StyleEx.basic()).on('click', e => {
+        const option = StyleEx.basic();
+
+        if (randomColor) {
+            const styleOptions = [
+                '#DF529B', '#E388AA', '#C4A4CC', '#955FA1', 
+                '#AB72AF', '#2182B6', '#27ADCB', '#65BA59', 
+                '#32B476', '#7CC7A0', '#A9CD45', '#F1E751',
+                '#E3D465', '#F6A32C', '#ED6B36', '#F77A7B',
+                '#F7AEAF', '#FB3A39'
+            ].map(c => {
+                return { color: '#000000', fillColor: c, weight: 1, fillOpacity: 0.7 };
+            });
+
+            _.assign(option, { style: f => {
+                const styleOption = styleOptions[_.random(0, 17)];
+                return styleOption;
+            } });
+        }
+        const jsonLayer = L.geoJSON(featureCollection, option).on('click', e => {
             this.loadHighlight(map, e.layer.feature);
             e.originalEvent.stopPropagation();
         });

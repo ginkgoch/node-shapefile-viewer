@@ -1,8 +1,8 @@
-const circleMarkerOptionsBase = { radius: 8, fillColor: '#ff7800', color: '#000', weight: 2, opacity: 1, fillOpacity: 0.8 };
-const circleMarkerOptionsHighlight = _.merge(_.clone(circleMarkerOptionsBase), { fillColor: '#ff0000', color: '#000', weight: 3 });
+const circleMarkerOptionsBase = { radius: 8, fillColor: '#ff7800', color: '#585b60', weight: 1, opacity: 1, fillOpacity: 0.8 };
+const circleMarkerOptionsHighlight = _.merge(_.clone(circleMarkerOptionsBase), { fillColor: '#ff0000', color: '#000', weight: 2 });
 const circleMarker = (latlng, options) => L.circleMarker(latlng, options);
-const optionsBase = { color: '#000000', fillColor: '#ff0000', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsBase) };
-const optionsHighlight = { color: 'yellow', fillColor: 'yellow', weight: 3, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsHighlight) };
+const optionsBase = { color: '#585b60', fillColor: '#ff0000', weight: 1, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsBase) };
+const optionsHighlight = { color: 'yellow', fillColor: 'yellow', weight: 2, pointToLayer: (f, latlng) => circleMarker(latlng, circleMarkerOptionsHighlight) };
 
 module.exports = {
     defaultStyles: { 
