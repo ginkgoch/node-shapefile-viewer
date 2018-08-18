@@ -1,6 +1,7 @@
 const MenuEx = require('./utils/menuEx');
 const ToolboxEx = require('./utils/toolboxEx');
 const Progress = require('./utils/progress');
+const ModalEx = require('./utils/modalEx');
 
 const G = { };
 $(async () => {
@@ -14,6 +15,7 @@ $(async () => {
     
     MenuEx.init();
     ToolboxEx.init();
+    ModalEx.init();
 });
 
 

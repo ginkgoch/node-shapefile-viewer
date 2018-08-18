@@ -45,6 +45,9 @@
         <button type="button" class="btn btn-outline-secondary btn-highlight-clear" title="Clear the highlights and popup">
           <i class="fas fa-broom toolbox-icon"></i>
         </button>
+        <button type="button" class="btn btn-outline-secondary btn-set-styles" title="Styles" data-toggle="modal" data-target="#styleModalCenter">
+          <i class="fas fa-palette toolbox-icon"></i>
+        </button>
       </div>
 
       <div class="btn-group" role="group" aria-label="Community" style="float:right">
@@ -74,6 +77,7 @@
   <div class="progress progress-xs-height progress-layout-top">
     <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
+  <!-- feedback begin -->
   <div class="modal fade" id="messageModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -102,6 +106,35 @@
       </div>
     </div>
   </div>
+  <!-- feedback end -->
+
+  <!-- style begin -->
+  <div class="modal fade" id="styleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messageModalLongTitle">Style Configuration</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="styleTextareaContent">Styles</label>
+              <textarea class="form-control" id="styleTextareaContent" rows="18"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary btn-style-save">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- style end -->
+
   <div class="alert alert-warning alert-dismissible container-alert fade show" role="alert">
     <div>
     </div>
