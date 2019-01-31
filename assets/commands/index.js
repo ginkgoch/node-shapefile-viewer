@@ -148,7 +148,7 @@ module.exports = class Commands {
 
     static _checkShapefilesExist(filePath) {
         const exts = ['.shp', '.shx', '.dbf'];
-        const missingFiles = exts.map(ext => filePath.replace(/\.shp/i, ext)).map(f => {
+        const missingFiles = exts.map(ext => filePath.replace(/\.shp$/i, ext)).map(f => {
             return fs.existsSync(f) ? { success: true } : { success: false, file: path.basename(f) };
         }).filter(r => !r.success).map(r => r.file);
 
