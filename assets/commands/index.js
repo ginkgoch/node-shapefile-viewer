@@ -3,7 +3,7 @@ const path = require('path');
 const { EventEmitter } = require('events');
 const CsvParser = require('../dep/json2csv.umd').Parser;
 const { dialog, shell } = require('electron').remote;
-const { Shapefile } = require('ginkgoch-shapefile-reader');
+const { Shapefile } = require('ginkgoch-shapefile');
 const TableEx = require('../utils/tableEx');
 const LeafletEx = require('../utils/leafletEx');
 const jsts = require('../dep/jsts.min');
@@ -105,7 +105,7 @@ module.exports = class Commands {
         }
     }
 
-    static async openShapefile(filePath = undefined) {
+    static openShapefile(filePath = undefined) {
         if (!_.isString(filePath) || _.isUndefined(filePath)) {
             filePath = dialog.showOpenDialog({ properties: ['openFile'], filters: extensionFilter });
             if(_.isUndefined(filePath) || filePath.length === 0) { return; }
@@ -116,13 +116,13 @@ module.exports = class Commands {
         
         G.mapState = { };
         G.mapState.shapefile = new Shapefile(filePath);
-        await Commands._initView(G.mapState.shapefile);
+        Commands._initView(G.mapState.shapefile);
         RecentlyFileEx.recordRecentlyOpened(filePath);
     }
 
-    static async _initView(shapefile) {
-        await shapefile.openWith(async () => {
-            const total = await shapefile.count();
+    static _initView(shapefile) {
+        shapefile.openWith(() => {
+            const total = shapefile.count();
             const envelope = shapefile.envelope();
             const fields = shapefile.fields();
             const columns = fields.map(f => { return { field: f, title: f }; });
@@ -130,17 +130,25 @@ module.exports = class Commands {
             G.progress.show();
             shapefile.eventEmitter = new EventEmitter();
             shapefile.eventEmitter.on('progress', (c, t) => G.progress.value(c * 100 / t));
-            const features = await shapefile.records();
+            const features = shapefile.records();
             shapefile.eventEmitter.removeAllListeners();
             shapefile.eventEmitter = null;
             G.progress.reset();
             
-            const data = features.map(f => f.properties);
+            const data = features.map(f => f.properties).map(p => {
+                const row = {}; 
+                for (let key of p.keys()) {
+                    row[key] = p.get(key);
+                }
+
+                return row;
+            });
             const options = { columns, data, pagination: true, paginationVAlign: 'top' };
             G.table.bootstrapTable('destroy').bootstrapTable(options).on('click-row.bs.table', TableEx.rowSelected);
             
             const bounds = LeafletEx.envelopeToBounds(envelope);
-            const featureCollection = { type: 'FeatureCollection', features };
+            const featuresJSON = features.map(f => f.toJSON());
+            const featureCollection = { type: 'FeatureCollection', features: featuresJSON };
             LeafletEx.loadJsonLayer(G.map, featureCollection).fitBounds(bounds);
             G.mapState = _.assign(G.mapState, { fields, total, envelope, columns, featureCollection });
         });
