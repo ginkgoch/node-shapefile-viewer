@@ -54,4 +54,4 @@ Currently, we support `GeoJson` and `CSV` file formats as target data format. On
 You could also find the `Export` button as well on the second position of the quick `Toolbox` space.
 
 ## Issues
-Contact [ginkgoch@outlook.com](mailto:ginkgoch@outlook.com) or [sumbit an issue](https://github.com/ginkgoch/node-shapefile-reader/issues).
+Contact [ginkgoch@outlook.com](mailto:ginkgoch@outlook.com) or [sumbit an issue](https://github.com/ginkgoch/node-shapefile-viewer/issues).

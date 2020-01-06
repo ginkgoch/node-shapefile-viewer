@@ -31,7 +31,7 @@ module.exports = class MenuEx {
             let filePath = i;
             const shorterName = MenuEx._shortenPath(filePath);
             const menuItem = new MenuItem({ label: shorterName, click: function(f) {
-                return async () => await Commands.openShapefile(f);
+                return () => Commands.openShapefile(f);
             }(filePath) });
 
             recentOpenedMenuItem.submenu.append(menuItem);
