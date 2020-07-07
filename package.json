@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^2.0.14",
+    "electron": "^9.1.0",
     "ginkgoch-shapefile": "^2.3.12"
   },
   "devDependencies": {
